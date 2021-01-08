@@ -1,11 +1,11 @@
 package Main;
 
-import Gui.Menu;
+import GUI.Login;
 
 public class Main {
 
     public static void main(String[] args) {
-        Menu menu = new Menu();
+        Login menu = new Login();
         menu.initTemplate();
     }
 

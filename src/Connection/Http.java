@@ -18,13 +18,22 @@ public class Http {
     private HttpPost post;
     private HttpResponse response;
     private String resource, base_url;
+    
+    private static Http http;
 
-    public Http() {
+    private Http() {
         htppClient = HttpClients.createDefault();
         get = null;
         post = null;
         base_url = "http://localhost:4000";
     }
+    
+    public static Http getInstance(){
+        if(http==null){
+            http = new Http();
+        }
+        return http;
+    } 
 
     public String GET(String ruta) {
 
