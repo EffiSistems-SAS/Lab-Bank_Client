@@ -6,6 +6,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -16,6 +17,7 @@ public class Http {
     private HttpClient htppClient;
     private HttpGet get;
     private HttpPost post;
+    private HttpPut put;
     private HttpResponse response;
     private String resource, base_url;
     
@@ -64,6 +66,17 @@ public class Http {
             System.out.println(e.getMessage());
         }
         
+    }
+    
+    public void PUT(String ruta,String data){
+        try{
+            put = new HttpPut(base_url + ruta);
+            put.setHeader("content-type", "application/json");
+            StringEntity final_data = new StringEntity(data);
+            put.setEntity(final_data);
+            response = htppClient.execute(put);
+            resource = EntityUtils.toString(response.getEntity());
+        }catch(Exception e){}
     }
 
 }

@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.time.LocalDateTime;
 import javax.swing.BorderFactory;
@@ -10,7 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+
+import Connection.Http;
+import Responses.Cuenta.*;
+import com.google.gson.Gson;
 
 public class Interfaz extends JFrame {
 
@@ -19,16 +23,20 @@ public class Interfaz extends JFrame {
     private JPanel panelCentral;
     private JLabel LblWelcome, LblHora = new JLabel();
     private JButton BtnAbonar, BtnRetirar, BtnConsultar, BtnQuit;
+    private Http http = Http.getInstance();
     private Timer timer = new Timer(1000, (e) -> {
         LocalDateTime a = LocalDateTime.now();
         LblHora.setText("<html><body><center>Hora actual<br>" + a.getDayOfMonth() + " / " + a.getMonthValue() + " / " + a.getYear() + "<br>" + a.getHour() + " : " + a.getMinute() + " : " + a.getSecond() + "</center></body></html>");
         repaint();
     });
+    private String id;
+    private Gson gson = new Gson();
 
-    public Interfaz() {
+    public Interfaz(String id) {
         ancho = 700;
         alto = 255;
         timer.start();
+        this.id = id;
     }
 
     public void initComponents() {
@@ -107,10 +115,20 @@ public class Interfaz extends JFrame {
         BtnAbonar.addActionListener(ae -> {
 
         });
+        
         BtnRetirar.addActionListener(ae -> {
-
+            String respuesta = http.GET("/account/get/?id="+id);
+            Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
+            
+            MenuRetirar menu = new MenuRetirar(cuenta);
+            menu.initTemplate();
+            
         });
+        
         BtnConsultar.addActionListener(ae -> {
+            String respuesta = http.GET("/account/get/?id="+id);
+            Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
+            JOptionPane.showMessageDialog(this, "Su saldo es de $"+cuenta.getData()[0].getSaldo());
 
         });
         BtnQuit.addActionListener(ae -> {

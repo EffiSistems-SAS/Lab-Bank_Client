@@ -111,7 +111,7 @@ public class Login extends JFrame {
             } else if (BtnLogin.getActionCommand().equals("Login")) {
                 if (tarjeta.getData()[0].getContraseña().equals(cambioContra(TxtFldPass.getPassword()))) {
                     dispose();
-                    Interfaz interfaz = new Interfaz();
+                    Interfaz interfaz = new Interfaz(TxtFldId.getText());
                     interfaz.initTemplate();
                 } else {
                     JOptionPane.showMessageDialog(null, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
