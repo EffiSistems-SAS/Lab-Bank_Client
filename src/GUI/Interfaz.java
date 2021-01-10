@@ -113,22 +113,26 @@ public class Interfaz extends JFrame {
 
     public void initListeners() {
         BtnAbonar.addActionListener(ae -> {
-
-        });
-        
-        BtnRetirar.addActionListener(ae -> {
-            String respuesta = http.GET("/account/get/?id="+id);
+            String respuesta = http.GET("/account/get/?id=" + id);
             Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
-            
+
+            MenuAbonar menu = new MenuAbonar(cuenta);
+            menu.initTemplate();
+        });
+
+        BtnRetirar.addActionListener(ae -> {
+            String respuesta = http.GET("/account/get/?id=" + id);
+            Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
+
             MenuRetirar menu = new MenuRetirar(cuenta);
             menu.initTemplate();
-            
+
         });
-        
+
         BtnConsultar.addActionListener(ae -> {
-            String respuesta = http.GET("/account/get/?id="+id);
+            String respuesta = http.GET("/account/get/?id=" + id);
             Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
-            JOptionPane.showMessageDialog(this, "Su saldo es de $"+cuenta.getData()[0].getSaldo());
+            JOptionPane.showMessageDialog(this, "Su saldo es de $" + cuenta.getData()[0].getSaldo());
 
         });
         BtnQuit.addActionListener(ae -> {
