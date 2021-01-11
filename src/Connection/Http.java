@@ -20,7 +20,7 @@ public class Http {
     private HttpPut put;
     private HttpResponse response;
     private String resource, base_url;
-    
+
     private static Http http;
 
     private Http() {
@@ -29,13 +29,13 @@ public class Http {
         post = null;
         base_url = "http://localhost:4000";
     }
-    
-    public static Http getInstance(){
-        if(http==null){
+
+    public static Http getInstance() {
+        if (http == null) {
             http = new Http();
         }
         return http;
-    } 
+    }
 
     public String GET(String ruta) {
 
@@ -62,21 +62,22 @@ public class Http {
         } catch (URISyntaxException ex) {
             System.out.println(ex.getMessage());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        
+
     }
-    
-    public void PUT(String ruta,String data){
-        try{
+
+    public void PUT(String ruta, String data) {
+        try {
             put = new HttpPut(base_url + ruta);
             put.setHeader("content-type", "application/json");
             StringEntity final_data = new StringEntity(data);
             put.setEntity(final_data);
             response = htppClient.execute(put);
             resource = EntityUtils.toString(response.getEntity());
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
     }
 
 }

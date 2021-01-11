@@ -1,8 +1,7 @@
 package Request;
 
-
 public class RequestSaldo {
-    
+
     private double saldo;
 
     public double getSaldo() {
@@ -12,7 +11,5 @@ public class RequestSaldo {
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
-    
-    
-    
+
 }

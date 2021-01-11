@@ -10,9 +10,11 @@ import javax.swing.JTextField;
 //
 import Connection.Http;
 import GUI.Interfaz;
+import Responses.Cuenta.Cuenta;
 import com.google.gson.Gson;
 //
 import Responses.Tarjeta.*;
+import Utils.DataBuilder;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 
@@ -26,6 +28,7 @@ public class Login extends JFrame {
     private JButton BtnLogin;
 
     private Http http = Http.getInstance();
+    private Gson gson = new Gson();
     private Tarjeta tarjeta = null;
 
     public Login() {
@@ -113,6 +116,9 @@ public class Login extends JFrame {
                     dispose();
                     Interfaz interfaz = new Interfaz(TxtFldId.getText());
                     interfaz.initTemplate();
+                    String respuesta = http.GET("/account/get/?id=" + TxtFldId.getText());
+                    Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
+                    DataBuilder.CreateOPClient(cuenta, "'OPID_010'", "NOACC", "NOVALUE");
                 } else {
                     JOptionPane.showMessageDialog(null, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
                     TxtFldPass.setText("");

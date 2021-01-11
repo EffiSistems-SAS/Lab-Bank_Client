@@ -14,6 +14,7 @@ import javax.swing.Timer;
 
 import Connection.Http;
 import Responses.Cuenta.*;
+import Utils.DataBuilder;
 import com.google.gson.Gson;
 
 public class Interfaz extends JFrame {
@@ -133,12 +134,15 @@ public class Interfaz extends JFrame {
             String respuesta = http.GET("/account/get/?id=" + id);
             Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
             JOptionPane.showMessageDialog(this, "Su saldo es de $" + cuenta.getData()[0].getSaldo());
-
+            DataBuilder.CreateOPClient(cuenta, "'OPID_003'", "NOACC","NOVALUE");
         });
         BtnQuit.addActionListener(ae -> {
             dispose();
             Login newLogin = new Login();
             newLogin.initTemplate();
+            String respuesta = http.GET("/account/get/?id=" + id);
+            Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
+            DataBuilder.CreateOPClient(cuenta, "'OPID_011'", "NOACC","NOVALUE");
         });
     }
 
