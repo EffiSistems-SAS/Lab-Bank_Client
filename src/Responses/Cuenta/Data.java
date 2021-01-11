@@ -2,24 +2,57 @@ package Responses.Cuenta;
 
 public class Data {
     
-    private int idCuenta,numero,idTarjeta,idCliente;
-    private String contraseña;
+    private String idCuenta,idTarjeta;
+    private int contraseña;
+    private long numero,idCliente,numeroTarjeta;
     private double  saldo;
 
-    public int getIdCuenta() {
+    public String getIdCuenta() {
         return idCuenta;
     }
 
-    public void setIdCuenta(int idCuenta) {
+    public void setIdCuenta(String idCuenta) {
         this.idCuenta = idCuenta;
     }
 
-    public int getNumero() {
+    public String getIdTarjeta() {
+        return idTarjeta;
+    }
+
+    public void setIdTarjeta(String idTarjeta) {
+        this.idTarjeta = idTarjeta;
+    }
+
+    public int getContraseña() {
+        return contraseña;
+    }
+
+    public void setContraseña(int contraseña) {
+        this.contraseña = contraseña;
+    }
+
+    public long getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(long numero) {
         this.numero = numero;
+    }
+
+    public long getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(long idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public long getNumeroTarjeta() {
+        return numeroTarjeta;
+    }
+
+    public void setNumeroTarjeta(long numeroTarjeta) {
+        this.numeroTarjeta = numeroTarjeta;
     }
 
     public double getSaldo() {
@@ -29,31 +62,5 @@ public class Data {
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
-
-    public int getIdTarjeta() {
-        return idTarjeta;
-    }
-
-    public void setIdTarjeta(int idTarjeta) {
-        this.idTarjeta = idTarjeta;
-    }
-
-    public int getIdCliente() {
-        return idCliente;
-    }
-
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
-
-    public String getContraseña() {
-        return contraseña;
-    }
-
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
-    }
-    
-
     
 }

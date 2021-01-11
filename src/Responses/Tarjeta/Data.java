@@ -2,20 +2,20 @@ package Responses.Tarjeta;
 
 public class Data {
 
-    private int idTarjeta;
+    private String idTarjeta;
     private String contraseña;
-    private int numero;
+    private long numero;
 
     @Override
     public String toString() {
         return "Data{" + "idTarjeta=" + idTarjeta + ", contrase\u00f1a=" + contraseña + ", numero=" + numero + '}';
     }
 
-    public int getIdTarjeta() {
+    public String getIdTarjeta() {
         return idTarjeta;
     }
 
-    public void setIdTarjeta(int idTarjeta) {
+    public void setIdTarjeta(String idTarjeta) {
         this.idTarjeta = idTarjeta;
     }
 
@@ -27,11 +27,11 @@ public class Data {
         this.contraseña = contraseña;
     }
 
-    public int getNumero() {
+    public long getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(long numero) {
         this.numero = numero;
     }
 
