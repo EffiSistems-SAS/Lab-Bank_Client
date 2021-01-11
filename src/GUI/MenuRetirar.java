@@ -48,7 +48,6 @@ public class MenuRetirar extends JFrame {
         LblWelcome.setLocation((panelCentral.getWidth() - LblWelcome.getWidth()) / 2, 10);
         LblWelcome.setHorizontalAlignment(JLabel.CENTER);
         LblWelcome.setFont(new Font("Arial", Font.BOLD, 20));
-        LblWelcome.setBackground(new Color(47, 53, 58));
         panelCentral.add(LblWelcome);
 
         BtnUno = new JButton("$20.000");
@@ -108,9 +107,9 @@ public class MenuRetirar extends JFrame {
             saldo.setSaldo(cuenta.getData()[0].getSaldo() - valor);
             String data = gson.toJson(saldo);
             http.PUT("/account/edit/?id=" + cuenta.getData()[0].getIdCuenta(), data);
-            String d = http.GET("/account/view/?id="+cuenta.getData()[0].getIdCuenta());
-            Cuenta nuevaCuenta = gson.fromJson(d, Cuenta.class);            
-            JOptionPane.showMessageDialog(null, "Operación Finalizada su nuevo saldo es de: $" + nuevaCuenta.getData()[0].getSaldo()+" .");
+            String d = http.GET("/account/view/?id=" + cuenta.getData()[0].getIdCuenta());
+            Cuenta nuevaCuenta = gson.fromJson(d, Cuenta.class);
+            JOptionPane.showMessageDialog(null, "Operación Finalizada su nuevo saldo es de: $" + nuevaCuenta.getData()[0].getSaldo() + " .");
             dispose();
         }
     }
@@ -147,7 +146,7 @@ public class MenuRetirar extends JFrame {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        
+
         BtnSeis.addActionListener((event) -> {
             try {
                 sendRequest(500000);
@@ -155,13 +154,18 @@ public class MenuRetirar extends JFrame {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        
+
         BtnCinco.addActionListener((event) -> {
             try {
-                int valor = Integer.parseInt(JOptionPane.showInputDialog(null, "Ingrese la cantidad a retirar","Otro",JOptionPane.OK_OPTION));
-                sendRequest(valor);
+                String res = JOptionPane.showInputDialog(null, "Ingrese la cantidad a retirar", "Otro", JOptionPane.OK_OPTION);
+                if (res != null) {
+                    int valor = Integer.parseInt(res);
+                    sendRequest(valor);
+                }
             } catch (RetiroInvalido ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex2) {
+                JOptionPane.showMessageDialog(null, "Valor invalido", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
