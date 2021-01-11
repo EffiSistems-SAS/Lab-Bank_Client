@@ -127,7 +127,6 @@ public class Interfaz extends JFrame {
         
         BtnConsultar.addActionListener(ae -> {
             String respuesta = http.GET("/account/get/?id="+id);
-            System.out.println(respuesta);
             Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
             JOptionPane.showMessageDialog(this, "Su saldo es de $"+cuenta.getData()[0].getSaldo());
 
