@@ -98,6 +98,7 @@ public class MenuAbonar extends JFrame {
             RequestSaldo saldo = new RequestSaldo();
             saldo.setSaldo(cuenta.getData()[0].getSaldo() - valor);
             String data = gson.toJson(saldo);
+            
             http.PUT("/account/edit/?id=" + cuenta.getData()[0].getIdCuenta(), data);
             String d = http.GET("/account/view/?id=" + cuenta.getData()[0].getIdCuenta());
             Cuenta nuevaCuenta = gson.fromJson(d, Cuenta.class);
@@ -110,20 +111,19 @@ public class MenuAbonar extends JFrame {
         BtnConfirmar.addActionListener((event) -> {
             try {
 
-                if (Integer.parseInt(TxtFldId.getText()) == cuenta.getData()[0].getNumero()) {
+                if (Long.parseLong(TxtFldId.getText()) == cuenta.getData()[0].getNumero()) {
                     throw new RetiroInvalido("Mismo número de cuenta");
                 }
 
                 sendRequest(Integer.parseInt(TxtFldValor.getText()));
-
-                String respuesta = http.GET("/account/getNumCuenta/?id=" + Integer.parseInt(TxtFldId.getText()));
+                String respuesta = http.GET("/account/getNumCuenta/?id=" + Long.parseLong(TxtFldId.getText()));
                 Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
-
+                
                 RequestSaldo saldo = new RequestSaldo();
                 saldo.setSaldo(cuenta.getData()[0].getSaldo() + Integer.parseInt(TxtFldValor.getText()));
-
+                
                 String data = gson.toJson(saldo);
-                http.PUT("/account/abonoCuenta/?id=" + Integer.parseInt(TxtFldId.getText()), data);
+                http.PUT("/account/abonoCuenta/?id=" + Long.parseLong(TxtFldId.getText()), data);
 
             } catch (RetiroInvalido ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

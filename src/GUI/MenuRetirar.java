@@ -157,7 +157,7 @@ public class MenuRetirar extends JFrame {
 
         BtnCinco.addActionListener((event) -> {
             try {
-                String res = JOptionPane.showInputDialog(null, "Ingrese la cantidad a retirar", "Otro", JOptionPane.OK_OPTION);
+                String res = JOptionPane.showInputDialog(null, "Ingrese la cantidad a retirar", "Otro", JOptionPane.INFORMATION_MESSAGE);
                 if (res != null) {
                     int valor = Integer.parseInt(res);
                     sendRequest(valor);

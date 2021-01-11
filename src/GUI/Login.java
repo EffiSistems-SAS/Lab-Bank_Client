@@ -115,6 +115,7 @@ public class Login extends JFrame {
                     interfaz.initTemplate();
                 } else {
                     JOptionPane.showMessageDialog(null, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+                    TxtFldPass.setText("");
                 }
             }
         });
