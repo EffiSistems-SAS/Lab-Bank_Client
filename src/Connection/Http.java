@@ -27,7 +27,7 @@ public class Http {
         htppClient = HttpClients.createDefault();
         get = null;
         post = null;
-        base_url = "http://localhost:4000";
+        base_url = "https://lab-atm-server.herokuapp.com";
     }
 
     public static Http getInstance() {
