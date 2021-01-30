@@ -1,15 +1,10 @@
 package Responses.Tarjeta;
 
-public class Data {
+public class DataTarjeta {
 
     private String idTarjeta;
     private String contraseña;
     private long numero;
-
-    @Override
-    public String toString() {
-        return "Data{" + "idTarjeta=" + idTarjeta + ", contrase\u00f1a=" + contraseña + ", numero=" + numero + '}';
-    }
 
     public String getIdTarjeta() {
         return idTarjeta;

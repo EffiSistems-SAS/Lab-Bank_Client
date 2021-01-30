@@ -3,7 +3,7 @@ package Responses.Cuenta;
 public class Cuenta {
     
     private int status;
-    private Data[] data;
+    private DataCuenta[] data;
 
     public int getStatus() {
         return status;
@@ -13,11 +13,11 @@ public class Cuenta {
         this.status = status;
     }
 
-    public Data[] getData() {
+    public DataCuenta[] getData() {
         return data;
     }
 
-    public void setData(Data[] data) {
+    public void setData(DataCuenta[] data) {
         this.data = data;
     }
     

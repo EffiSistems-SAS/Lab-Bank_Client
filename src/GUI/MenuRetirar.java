@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import Responses.Cuenta.Cuenta;
 import Connection.Http;
 import com.google.gson.Gson;
-import Exceptions.RetiroInvalido;
+import Exceptions.OperacionInvalida;
 import Request.*;
 import Utils.DataBuilder;
 
@@ -100,9 +100,9 @@ public class MenuRetirar extends JFrame {
         add(BtnCinco);
     }
     
-    private void sendRequest(int valor) throws RetiroInvalido {
+    private void sendRequest(int valor) throws OperacionInvalida {
         if (valor > cuenta.getData()[0].getSaldo()) {
-            throw new RetiroInvalido("Saldo insuficiente");
+            throw new OperacionInvalida("Saldo insuficiente");
         } else {
             RequestSaldo saldo = new RequestSaldo();
             saldo.setSaldo(cuenta.getData()[0].getSaldo() - valor);
@@ -122,7 +122,7 @@ public class MenuRetirar extends JFrame {
         BtnUno.addActionListener((event) -> {
             try {
                 sendRequest(20000);
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -130,7 +130,7 @@ public class MenuRetirar extends JFrame {
         BtnDos.addActionListener((event) -> {
             try {
                 sendRequest(50000);
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -138,7 +138,7 @@ public class MenuRetirar extends JFrame {
         BtnTres.addActionListener((event) -> {
             try {
                 sendRequest(100000);
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -146,7 +146,7 @@ public class MenuRetirar extends JFrame {
         BtnCuatro.addActionListener((event) -> {
             try {
                 sendRequest(200000);
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -154,7 +154,7 @@ public class MenuRetirar extends JFrame {
         BtnSeis.addActionListener((event) -> {
             try {
                 sendRequest(500000);
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -166,7 +166,7 @@ public class MenuRetirar extends JFrame {
                     int valor = Integer.parseInt(res);
                     sendRequest(valor);
                 }
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, "Saldo insuficiente", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (NumberFormatException ex2) {
                 JOptionPane.showMessageDialog(null, "Valor invalido", "Error", JOptionPane.ERROR_MESSAGE);

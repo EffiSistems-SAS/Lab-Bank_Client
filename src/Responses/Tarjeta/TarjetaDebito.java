@@ -1,14 +1,9 @@
 package Responses.Tarjeta;
 
-public class Tarjeta {
+public class TarjetaDebito {
 
     private int status;
-    private Data[] data;
-
-    @Override
-    public String toString() {
-        return "Tarjeta{" + "Status=" + status + ", data=" + data + '}';
-    }
+    private DataTarjeta[] data;
 
     public int getStatus() {
         return status;
@@ -18,11 +13,11 @@ public class Tarjeta {
         this.status = Status;
     }
 
-    public Data[] getData() {
+    public DataTarjeta[] getData() {
         return data;
     }
 
-    public void setData(Data[] data) {
+    public void setData(DataTarjeta[] data) {
         this.data = data;
     }
 

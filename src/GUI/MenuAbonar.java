@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import Responses.Cuenta.Cuenta;
 import Connection.Http;
 import com.google.gson.Gson;
-import Exceptions.RetiroInvalido;
+import Exceptions.OperacionInvalida;
 import Request.RequestSaldo;
 import Utils.DataBuilder;
 import javax.swing.JTextField;
@@ -30,7 +30,7 @@ public class MenuAbonar extends JFrame {
     private JButton BtnConfirmar;
     private Http http = Http.getInstance();
     private Gson gson = new Gson();
-    private Cuenta cuenta, cuentaAbono;
+    private Cuenta cuenta;
 
     public MenuAbonar(Cuenta cuenta) {
         ancho = 700;
@@ -92,9 +92,9 @@ public class MenuAbonar extends JFrame {
 
     }
 
-    private void sendRequest(int valor) throws RetiroInvalido {
+    private void sendRequest(int valor) throws OperacionInvalida {
         if (valor > cuenta.getData()[0].getSaldo()) {
-            throw new RetiroInvalido("Saldo insuficiente");
+            throw new OperacionInvalida("Saldo insuficiente");
         } else {
             RequestSaldo saldo = new RequestSaldo();
             saldo.setSaldo(cuenta.getData()[0].getSaldo() - valor);
@@ -113,7 +113,7 @@ public class MenuAbonar extends JFrame {
             try {
 
                 if (Long.parseLong(TxtFldId.getText()) == cuenta.getData()[0].getNumero()) {
-                    throw new RetiroInvalido("Mismo número de cuenta");
+                    throw new OperacionInvalida("Mismo número de cuenta");
                 }
 
                 sendRequest(Integer.parseInt(TxtFldValor.getText()));
@@ -128,7 +128,7 @@ public class MenuAbonar extends JFrame {
 
                 DataBuilder.CreateOPClient(cuenta, "'OPID_001'", "'" + cuenta.getData()[0].getIdCuenta() + "'", TxtFldValor.getText());
 
-            } catch (RetiroInvalido ex) {
+            } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });

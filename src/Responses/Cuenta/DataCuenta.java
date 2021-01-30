@@ -1,6 +1,6 @@
 package Responses.Cuenta;
 
-public class Data {
+public class DataCuenta {
     
     private String idCuenta,idTarjeta;
     private int contraseña;

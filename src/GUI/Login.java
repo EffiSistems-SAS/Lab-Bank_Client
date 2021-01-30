@@ -29,7 +29,7 @@ public class Login extends JFrame {
 
     private Http http = Http.getInstance();
     private Gson gson = new Gson();
-    private Tarjeta tarjeta = null;
+    private TarjetaDebito tarjeta = null;
 
     public Login() {
         ancho = 250;
@@ -101,7 +101,7 @@ public class Login extends JFrame {
             if (BtnLogin.getActionCommand().equals("Confirmar")) {
                 String res = http.GET("/card/view/?id=" + TxtFldId.getText());
                 Gson gson = new Gson();
-                tarjeta = gson.fromJson(res, Tarjeta.class);
+                tarjeta = gson.fromJson(res, TarjetaDebito.class);
                 if (tarjeta.getStatus() == 200) {
                     TxtFldId.setVisible(false);
                     LblId.setVisible(false);
