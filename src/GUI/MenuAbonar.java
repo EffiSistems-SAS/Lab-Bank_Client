@@ -15,6 +15,7 @@ import Responses.Cuenta.Cuenta;
 import Connection.Http;
 import com.google.gson.Gson;
 import Exceptions.OperacionInvalida;
+import Models.Banco;
 import Request.RequestSaldo;
 import Utils.DataBuilder;
 import javax.swing.JTextField;
@@ -23,19 +24,18 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 public class MenuAbonar extends JFrame {
 
     private final int ancho, alto;
-
     private JPanel panelCentral;
     private JLabel LblWelcome, LblId, LblValor;
-    private JTextField TxtFldId, TxtFldValor;
+    private JTextField TxtFldNumero, TxtFldValor;
     private JButton BtnConfirmar;
     private Http http = Http.getInstance();
     private Gson gson = new Gson();
-    private Cuenta cuenta;
+    private Cuenta cuentaAbonante;
 
     public MenuAbonar(Cuenta cuenta) {
         ancho = 700;
         alto = 255;
-        this.cuenta = cuenta;
+        this.cuentaAbonante = cuenta;
     }
 
     public void initComponents() {
@@ -68,12 +68,12 @@ public class MenuAbonar extends JFrame {
         LblValor.setFont(new Font("Arial", Font.BOLD, 15));
         panelCentral.add(LblValor);
 
-        TxtFldId = new JTextField();
-        TxtFldId.setSize(170, 30);
-        TxtFldId.setLocation(220, 65);
-        TxtFldId.setHorizontalAlignment(JTextField.CENTER);
-        TxtFldId.setFont(new Font("Arial", Font.BOLD, 15));
-        panelCentral.add(TxtFldId);
+        TxtFldNumero = new JTextField();
+        TxtFldNumero.setSize(170, 30);
+        TxtFldNumero.setLocation(220, 65);
+        TxtFldNumero.setHorizontalAlignment(JTextField.CENTER);
+        TxtFldNumero.setFont(new Font("Arial", Font.BOLD, 15));
+        panelCentral.add(TxtFldNumero);
 
         TxtFldValor = new JTextField();
         TxtFldValor.setSize(170, 30);
@@ -93,15 +93,15 @@ public class MenuAbonar extends JFrame {
     }
 
     private void sendRequest(int valor) throws OperacionInvalida {
-        if (valor > cuenta.getData()[0].getSaldo()) {
+        if (cuentaAbonante.verificarRetiro(valor)) { // VERIFICAR QUE EL MONTO SEA VÁLIDO
             throw new OperacionInvalida("Saldo insuficiente");
         } else {
             RequestSaldo saldo = new RequestSaldo();
-            saldo.setSaldo(cuenta.getData()[0].getSaldo() - valor);
+            saldo.setSaldo(cuentaAbonante.getData()[0].getSaldo() - valor);
             String data = gson.toJson(saldo);
 
-            http.PUT("/account/edit/?id=" + cuenta.getData()[0].getIdCuenta(), data);
-            String d = http.GET("/account/view/?id=" + cuenta.getData()[0].getIdCuenta());
+            http.PUT("/account/edit/?id=" + cuentaAbonante.getData()[0].getIdCuenta(), data);
+            String d = http.GET("/account/view/?id=" + cuentaAbonante.getData()[0].getIdCuenta());
             Cuenta nuevaCuenta = gson.fromJson(d, Cuenta.class);
             JOptionPane.showMessageDialog(null, "Operación Finalizada su nuevo saldo es de: $" + nuevaCuenta.getData()[0].getSaldo() + " .");
             dispose();
@@ -111,28 +111,31 @@ public class MenuAbonar extends JFrame {
     public void initListeners() {
         BtnConfirmar.addActionListener((event) -> {
             try {
-
-                if (Long.parseLong(TxtFldId.getText()) == cuenta.getData()[0].getNumero()) {
+                Cuenta cuentaAbonar = Banco.getCuenta(TxtFldNumero.getText());
+                if (Banco.verificarCuentaValida(Long.valueOf(TxtFldNumero.getText()), cuentaAbonante)) { // VERIFICAR VALIDEZ DE LA CUENTA
                     throw new OperacionInvalida("Mismo número de cuenta");
+                } else {
+                    if (cuentaAbonar.getStatus() == 404) {
+                        throw new OperacionInvalida("Cuenta no valida");
+                    }
                 }
 
                 sendRequest(Integer.parseInt(TxtFldValor.getText()));
-                String respuesta = http.GET("/account/getNumCuenta/?id=" + Long.parseLong(TxtFldId.getText()));
-                Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
 
                 RequestSaldo saldo = new RequestSaldo();
-                saldo.setSaldo(cuenta.getData()[0].getSaldo() + Integer.parseInt(TxtFldValor.getText()));
+                saldo.setSaldo(cuentaAbonar.getData()[0].getSaldo() + Integer.parseInt(TxtFldValor.getText()));
 
                 String data = gson.toJson(saldo);
-                http.PUT("/account/abonoCuenta/?id=" + Long.parseLong(TxtFldId.getText()), data);
+                http.PUT("/account/abonoCuenta/?id=" + Long.parseLong(TxtFldNumero.getText()), data);
 
-                DataBuilder.CreateOPClient(cuenta, "'OPID_001'", "'" + cuenta.getData()[0].getIdCuenta() + "'", TxtFldValor.getText());
+                DataBuilder.CreateOPClient(cuentaAbonar, "'OPID_001'", "'" + cuentaAbonar.getData()[0].getIdCuenta() + "'", TxtFldValor.getText());
 
             } catch (OperacionInvalida ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Solo valores numéricos enteros", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
     }
 
     public void initTemplate() {

@@ -1,11 +1,12 @@
 package Responses.Cuenta;
 
 public class DataCuenta {
-    
-    private String idCuenta,idTarjeta;
+
+    private final int montoMaximoDiario = 3000000;
+    private String idCuenta, idTarjeta;
     private int contraseña;
-    private long numero,idCliente,numeroTarjeta;
-    private double  saldo;
+    private long numero, idCliente, numeroTarjeta, montoRetiradoPorDia;
+    private double saldo;
 
     public String getIdCuenta() {
         return idCuenta;
@@ -51,6 +52,14 @@ public class DataCuenta {
         return numeroTarjeta;
     }
 
+    public int getMontoMaximoDiario() {
+        return montoMaximoDiario;
+    }
+
+    public long getMontoRetiradoPorDia() {
+        return montoRetiradoPorDia;
+    }
+
     public void setNumeroTarjeta(long numeroTarjeta) {
         this.numeroTarjeta = numeroTarjeta;
     }
@@ -62,5 +71,10 @@ public class DataCuenta {
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
-    
+
+    @Override
+    public String toString() {
+        return "DataCuenta{" + "montoMaximoDiario=" + montoMaximoDiario + ", idCuenta=" + idCuenta + ", idTarjeta=" + idTarjeta + ", contrase\u00f1a=" + contraseña + ", numero=" + numero + ", idCliente=" + idCliente + ", numeroTarjeta=" + numeroTarjeta + ", montoRetiradoxDia=" + montoRetiradoPorDia + ", saldo=" + saldo + '}';
+    }
+
 }

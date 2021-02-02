@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 public class DataBuilder {
     
-    public static void CreateOPClient(Cuenta cuenta, String idOp, String idAccAbono, String Valor) {
+    public static void CreateOPClient(Cuenta cuenta, String idOp, String idAccAbono, String valor) {
         RequestOperacionCliente request = new RequestOperacionCliente();
         Gson gson = new Gson();
         Http http = Http.getInstance();
@@ -16,7 +16,7 @@ public class DataBuilder {
         request.setIdCliente(cuenta.getData()[0].getIdCliente());
         request.setIdOperacion(idOp);
         request.setIdCuentaAbonada(idAccAbono);
-        request.setValor(Valor);
+        request.setValor(valor);
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         request.setFechaOperacion("'" + ts.toString() + "'");
         

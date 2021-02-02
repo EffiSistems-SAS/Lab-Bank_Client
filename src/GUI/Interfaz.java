@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import Connection.Http;
+import Models.Atm;
+import Models.Banco;
 import Responses.Cuenta.*;
 import Utils.DataBuilder;
 import com.google.gson.Gson;
@@ -32,12 +34,38 @@ public class Interfaz extends JFrame {
     });
     private String id;
     private Gson gson = new Gson();
+    private Atm atm;
+    private static Interfaz interfaz;
 
-    public Interfaz(String id) {
+    public static Interfaz getInterfaz() {
+        interfaz.hideButton();
+        return interfaz;
+    }
+
+    public static Interfaz getInterfaz(String id, Atm atm) {
+        if (interfaz == null) {
+            interfaz = new Interfaz(id, atm);
+            interfaz.initTemplate();
+        }
+        interfaz.setVisible(true);
+        return interfaz;
+    }
+
+    private Interfaz(String id, Atm atm) {
+        this.atm = atm;
         ancho = 700;
         alto = 255;
         timer.start();
         this.id = id;
+        if (!atm.isDisponible()) {
+            BtnRetirar.setEnabled(false);
+        }
+    }
+
+    public void hideButton() {
+        if (!atm.isDisponible()) {
+            BtnRetirar.setEnabled(false);
+        }
     }
 
     public void initComponents() {
@@ -125,24 +153,20 @@ public class Interfaz extends JFrame {
             String respuesta = http.GET("/account/get/?id=" + id);
             Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
 
-            MenuRetirar menu = new MenuRetirar(cuenta);
+            MenuRetirar menu = new MenuRetirar(cuenta, atm);
             menu.initTemplate();
-
         });
 
         BtnConsultar.addActionListener(ae -> {
-            String respuesta = http.GET("/account/get/?id=" + id);
-            Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
-            JOptionPane.showMessageDialog(this, "Su saldo es de $" + cuenta.getData()[0].getSaldo());
-            DataBuilder.CreateOPClient(cuenta, "'OPID_003'", "NOACC","NOVALUE");
+            JOptionPane.showMessageDialog(this, "Su saldo es de $" + String.valueOf(Banco.getSaldo(id)));
         });
         BtnQuit.addActionListener(ae -> {
-            dispose();
-            Login newLogin = new Login();
-            newLogin.initTemplate();
+            setVisible(false);
+            Login newLogin = Login.getLogin();
+            newLogin.setVisible(true);
             String respuesta = http.GET("/account/get/?id=" + id);
             Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
-            DataBuilder.CreateOPClient(cuenta, "'OPID_011'", "NOACC","NOVALUE");
+            DataBuilder.CreateOPClient(cuenta, "'OPID_011'", "NOACC", "NOVALUE");
         });
     }
 

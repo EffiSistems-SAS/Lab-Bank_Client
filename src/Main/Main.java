@@ -1,12 +1,13 @@
 package Main;
 
-import GUI.Login;
+import Models.Banco;
+import Models.Atm;
 
 public class Main {
 
     public static void main(String[] args) {
-        Login menu = new Login();
-        menu.initTemplate();
+        Banco newBanco = new Banco();
+        newBanco.setAtm(new Atm(newBanco));
     }
 
 }

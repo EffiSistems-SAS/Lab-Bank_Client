@@ -20,7 +20,6 @@ public class Http {
     private HttpPut put;
     private HttpResponse response;
     private String resource, base_url;
-
     private static Http http;
 
     private Http() {

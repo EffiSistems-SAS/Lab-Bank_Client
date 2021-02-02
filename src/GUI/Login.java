@@ -9,11 +9,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 //
 import Connection.Http;
-import GUI.Interfaz;
+import Exceptions.TarjetaVencida;
+import Models.Banco;
+import Models.Atm;
+import Request.RequestTarjeta;
 import Responses.Cuenta.Cuenta;
 import com.google.gson.Gson;
 //
-import Responses.Tarjeta.*;
 import Utils.DataBuilder;
 import java.awt.Color;
 import javax.swing.JOptionPane;
@@ -27,17 +29,50 @@ public class Login extends JFrame {
     private JPasswordField TxtFldPass;
     private JButton BtnLogin;
 
+    private Atm atm;
+    private Banco banco;
     private Http http = Http.getInstance();
     private Gson gson = new Gson();
-    private TarjetaDebito tarjeta = null;
+    private static Login login;
 
-    public Login() {
+    public static Login getLogin() {
+        login.resetValues();
+        return login;
+    }
+
+    public static Login getLogin(Atm atm, Banco banco) {
+        if (login == null) {
+            login = new Login(atm, banco);
+        }
+        return login;
+    }
+
+    private Login(Atm atm, Banco banco) {
+        this.banco = banco;
+        this.atm = atm;
         ancho = 250;
         alto = 155;
     }
 
-    public void initComponents() {
+    public String cambioContra(char[] pass) {
+        String res = "";
+        for (char e : pass) {
+            res += e;
+        }
+        return res;
+    }
 
+    public void resetValues() {
+        LblId.setVisible(true);
+        TxtFldId.setVisible(true);
+        TxtFldId.setText("");
+        LblPass.setVisible(false);
+        TxtFldPass.setVisible(false);
+        TxtFldPass.setText("");
+        BtnLogin.setText("Confirmar");
+    }
+
+    public void initComponents() {
         LblId = new JLabel("ID: ");
         LblId.setSize(70, 30);
         LblId.setLocation(5, 20);
@@ -69,7 +104,6 @@ public class Login extends JFrame {
         BtnLogin.setForeground(Color.WHITE);
         BtnLogin.setFocusable(false);
         add(BtnLogin);
-
     }
 
     public void initTemplate() {
@@ -83,47 +117,60 @@ public class Login extends JFrame {
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
+
         setVisible(true);
-    }
-
-    public String cambioContra(char[] pass) {
-
-        String res = "";
-        for (char e : pass) {
-            res += e;
-        }
-
-        return res;
     }
 
     public void initListeners() {
         BtnLogin.addActionListener((ae) -> {
             if (BtnLogin.getActionCommand().equals("Confirmar")) {
-                String res = http.GET("/card/view/?id=" + TxtFldId.getText());
-                Gson gson = new Gson();
-                tarjeta = gson.fromJson(res, TarjetaDebito.class);
-                if (tarjeta.getStatus() == 200) {
-                    TxtFldId.setVisible(false);
-                    LblId.setVisible(false);
-                    LblPass.setVisible(true);
-                    TxtFldPass.setVisible(true);
-                    BtnLogin.setText("Login");
-                } else {
-                    JOptionPane.showMessageDialog(null, "ID no encontrada", "Error", JOptionPane.ERROR_MESSAGE);
+                try {
+                    if (Banco.verificarVeracidadTarjeta(atm.getTarjeta(), TxtFldId.getText())) { // VALIDAR VERACIDAD DE LA TARJETA
+                        if (!atm.verificarNumeroIntentos(TxtFldId.getText())) {   // VERIFICAR NÚMERO DE INTENTOS MENOR A 3 POR TARJETA
+                            TxtFldId.setVisible(false);
+                            LblId.setVisible(false);
+                            LblPass.setVisible(true);
+                            TxtFldPass.setVisible(true);
+                            BtnLogin.setText("Login");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Número de intentos excedido", "Error", JOptionPane.ERROR_MESSAGE);
+                            TxtFldId.setText("");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "ID no encontrada", "Error", JOptionPane.ERROR_MESSAGE);
+                        TxtFldId.setText("");
+                    }
+                } catch (TarjetaVencida ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    TxtFldId.setText("");
                 }
             } else if (BtnLogin.getActionCommand().equals("Login")) {
-                if (tarjeta.getData()[0].getContraseña().equals(cambioContra(TxtFldPass.getPassword()))) {
-                    dispose();
-                    Interfaz interfaz = new Interfaz(TxtFldId.getText());
-                    interfaz.initTemplate();
+                if (Banco.validarIdentidadUsuario(atm.getTarjeta(), cambioContra(TxtFldPass.getPassword()), TxtFldId.getText())) { // VALIDAR IDENTIDAD DEL USUARIO
+                    setVisible(false);
+                    Interfaz interfaz = Interfaz.getInterfaz(TxtFldId.getText(), atm);
                     String respuesta = http.GET("/account/get/?id=" + TxtFldId.getText());
                     Cuenta cuenta = gson.fromJson(respuesta, Cuenta.class);
                     DataBuilder.CreateOPClient(cuenta, "'OPID_010'", "NOACC", "NOVALUE");
                 } else {
-                    JOptionPane.showMessageDialog(null, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-                    TxtFldPass.setText("");
+                    if (atm.verificarNumeroIntentos(TxtFldId.getText())) { // VERIFICAR NÚMERO DE INTENTOS MENOR A 3 POR TARJETA 
+                        JOptionPane.showMessageDialog(null, "Número de intentos excedido", "Error", JOptionPane.ERROR_MESSAGE);
+                        TxtFldId.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+                        TxtFldPass.setText("");
+                        RequestTarjeta reqTar = new RequestTarjeta();
+                        atm.getTarjeta().bringData(TxtFldId.getText());
+                        reqTar.setNumeroIntentos(atm.getTarjeta().getData()[0].getNumeroIntentos() + 1);
+                        String data = gson.toJson(reqTar);
+                        http.PUT("/card/wrong-access/?id=" + (TxtFldId.getText()), data);
+                        if (reqTar.getNumeroIntentos() == 3) {
+                            JOptionPane.showMessageDialog(null, "Número de intentos excedido", "Error", JOptionPane.ERROR_MESSAGE);
+                            resetValues();
+                        }
+                    }
                 }
             }
-        });
+        }
+        );
     }
 }
